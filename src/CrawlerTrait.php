@@ -10,15 +10,16 @@
 // +----------------------------------------------------------------------
 namespace think\testing;
 
-use think\App;
-use think\Config;
-use think\Cookie;
 use think\Error;
 use think\Exception;
+use think\exception\ThrowableError;
+use think\facade\App;
+use think\facade\Cookie;
+use think\facade\Request;
+use think\facade\Response;
+use think\facade\Route;
 use think\helper\Arr;
 use think\helper\Str;
-use think\Request;
-use think\Response;
 
 trait CrawlerTrait
 {
@@ -30,7 +31,6 @@ trait CrawlerTrait
 
     /** @var  Response */
     protected $response;
-
 
     public function get($uri, array $headers = [])
     {
@@ -68,8 +68,7 @@ trait CrawlerTrait
         return $this;
     }
 
-
-    public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null, $header = [])
+    public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
     {
         $this->currentUri = $this->prepareUrlForRequest($uri);
 
@@ -77,20 +76,18 @@ trait CrawlerTrait
             $this->currentUri, $method, $parameters,
             $cookies, $files, array_replace($this->serverVariables, $server)
         );
-        if (!empty($header)) {
-            $request->header($header);
-        }
+
         try {
-            $response = App::run($request);
+            Route::setRequest($request);
+            $response = App::bindTo('request', $request)->run();
         } catch (Exception $e) {
             $response = Error::getExceptionHandler()->render($e);
         } catch (\Throwable $e) {
-            $response = Error::getExceptionHandler()->render($e);
+            $response = Error::getExceptionHandler()->render(new ThrowableError($e));
         }
 
         return $this->response = $response;
     }
-
 
     public function seeJson($data = null, $negate = false)
     {
@@ -122,12 +119,12 @@ trait CrawlerTrait
 
         $actual = json_decode($this->response->getContent(), true);
 
-        if (is_null($actual) || $actual === false) {
+        if (is_null($actual) || false === $actual) {
             return $this->fail('Invalid JSON was returned from the route. Perhaps an exception was thrown?');
         }
 
         $actual = json_encode(Arr::sortRecursive(
-            (array)$actual
+            (array) $actual
         ));
 
         foreach (Arr::sortRecursive($data) as $key => $value) {
@@ -181,7 +178,6 @@ trait CrawlerTrait
         $this->assertEquals($action, request()->action());
         return $this;
     }
-
 
     protected function seeStatusCode($status)
     {
@@ -238,7 +234,7 @@ trait CrawlerTrait
         foreach ($headers as $name => $value) {
             $name = strtr(strtoupper($name), '-', '_');
 
-            if (!Str::startsWith($name, $prefix) && $name != 'CONTENT_TYPE') {
+            if (!Str::startsWith($name, $prefix) && 'CONTENT_TYPE' != $name) {
                 $name = $prefix . $name;
             }
 
