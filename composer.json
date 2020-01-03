@@ -22,5 +22,12 @@
     "psr-4": {
       "think\\testing\\": "src"
     }
+  },
+  "extra": {
+    "think": {
+      "services": [
+        "think\\testing\\JwxhService"
+      ]
+    }
   }
 }

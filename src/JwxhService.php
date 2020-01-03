@@ -2,11 +2,22 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006-2015 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2016 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
-//这个命令在新版本可能不需要了!
-//\think\Console::addDefaultCommands(['\\think\\testing\\command\\Test']);
+namespace think\testing;
+
+use think\testing\command\Test;
+
+class JwxhService extends \think\Service
+{
+    public function boot()
+    {
+        $this->commands([
+            Test::class,
+        ]);
+    }
+}
