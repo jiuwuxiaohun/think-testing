@@ -23,7 +23,7 @@
       "think\\testing\\": "src"
     },
     "files": [
-      "src/config.php"
+      //"src/config.php"
     ]
   }
 }
