@@ -21,9 +21,6 @@
   "autoload": {
     "psr-4": {
       "think\\testing\\": "src"
-    },
-    "files": [
-      //"src/config.php"
-    ]
+    }
   }
 }
