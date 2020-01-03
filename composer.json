@@ -25,7 +25,7 @@
   "extra": {
     "think": {
       "services": [
-        "think\\testing\\JwxhService"
+        "think\\testing\\Service"
       ]
     }
   }

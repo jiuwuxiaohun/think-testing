@@ -12,12 +12,12 @@ namespace think\testing;
 
 use think\testing\command\Test;
 
-class JwxhService extends \think\Service
+class Service extends \think\Service
 {
     public function boot()
     {
         $this->commands([
-            Test::class,
+            'unit' => Test::class,
         ]);
     }
 }
